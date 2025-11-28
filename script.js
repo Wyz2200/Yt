@@ -1,89 +1,42 @@
-const proxy = "https://cors.zme.ink/";
+<input id="searchInput" placeholder="搜尋影片">
+<button onclick="doSearch()">搜尋</button>
 
+<h2>結果</h2>
+<div id="results"></div>
+
+<iframe id="player" width="100%" height="480" allowfullscreen></iframe>
+
+<script>
 function doSearch() {
   const keyword = document.getElementById("searchInput").value;
-  document.getElementById("results").innerHTML = "搜尋中...";
+  const results = document.getElementById("results");
+  results.innerHTML = "";
 
-  Promise.allSettled([
-    searchYouTube(keyword),
-    searchBilibili(keyword)
-  ]).then(results => {
+  // 直接產生 YouTube 搜尋結果
+  for (let i = 1; i <= 5; i++) {
+    const ytUrl = `https://www.youtube.com/watch?v=dQw4w9WgXcQ`; // 範例固定影片，可改成動態
+    const div = document.createElement("div");
+    div.innerHTML = `YouTube 影片 ${i} <button onclick="playVideo('YouTube','${ytUrl}')">播放</button>`;
+    results.appendChild(div);
+  }
 
-    const yt = results[0].status === "fulfilled" ? results[0].value : [];
-    const bili = results[1].status === "fulfilled" ? results[1].value : [];
-
-    const merged = [...yt, ...bili];
-
-    if (merged.length === 0) {
-      document.getElementById("results").innerHTML =
-        "找不到影片（可能是來源網站封鎖或 proxy 失效）";
-      return;
-    }
-
-    renderVideos(merged);
-  });
-}
-
-// ---------- YouTube ----------
-async function searchYouTube(keyword) {
-  const url = proxy + encodeURIComponent(
-    "https://www.youtube.com/results?search_query=" + keyword
-  );
-
-  const res = await fetch(url);
-  const html = await res.text();
-
-  const matches = [...html.matchAll(/"videoId":"(.*?)"/g)];
-
-  return matches.slice(0, 10).map(m => ({
-    platform: "YouTube",
-    videoId: m[1],
-    title: "YouTube 影片",
-    thumbnail: `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg`
-  }));
-}
-
-// ---------- Bilibili ----------
-async function searchBilibili(keyword) {
-  const url = proxy + encodeURIComponent(
-    "https://search.bilibili.com/all?keyword=" + keyword
-  );
-
-  const res = await fetch(url);
-  const html = await res.text();
-
-  const matches = [...html.matchAll(/www\.bilibili\.com\/video\/(BV\w+)/g)];
-
-  return matches.slice(0, 10).map(m => ({
-    platform: "Bilibili",
-    videoId: m[1],
-    title: m[1],
-    thumbnail: ""
-  }));
-}
-
-// ---------- 渲染 ----------
-function renderVideos(videos) {
-  const container = document.getElementById("results");
-  container.innerHTML = "";
-
-  videos.forEach(v => {
-    container.innerHTML += `
-      <div class="card" onclick="playVideo('${v.platform}', '${v.videoId}')">
-        ${v.thumbnail ? `<img src="${v.thumbnail}">` : ""}
-        <div class="title">${v.title}</div>
-        <div class="sourceTag">${v.platform}</div>
-      </div>
-    `;
-  });
-}
-
-function playVideo(platform, id) {
-  const player = document.getElementById("player");
-
-  if (platform === "YouTube") {
-    player.src = `https://www.youtube.com/embed/${id}`;
-  } else {
-    player.src = `https://www.bilibili.com/player.html?bvid=${id}`;
+  // 直接產生 Bilibili 搜尋結果
+  for (let i = 1; i <= 5; i++) {
+    const biliUrl = `https://www.bilibili.com/video/BV1x5411c7Xg`; // 範例固定影片，可改成動態
+    const div = document.createElement("div");
+    div.innerHTML = `Bilibili 影片 ${i} <button onclick="playVideo('Bilibili','${biliUrl}')">播放</button>`;
+    results.appendChild(div);
   }
 }
+
+function playVideo(platform, url) {
+  const player = document.getElementById("player");
+  if (platform === "YouTube") {
+    // 轉成 iframe embed
+    const videoId = url.split("v=")[1];
+    player.src = `https://www.youtube.com/embed/${videoId}`;
+  } else if (platform === "Bilibili") {
+    player.src = `https://player.bilibili.com/player.html?bvid=${url.split("/video/")[1]}`;
+  }
+}
+</script>

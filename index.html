@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MultiTube</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!-- Top Bar -->
+  <div class="topbar">
+      <div class="logo">MultiTube</div>
+      <div class="searchbox">
+          <input id="searchInput" placeholder="搜尋影片">
+          <button onclick="doSearch()">🔍</button>
+      </div>
+  </div>
+
+  <!-- Video Results -->
+  <div id="results" class="results"></div>
+
+  <!-- Floating Player -->
+  <div class="playerBox">
+    <iframe id="player" allowfullscreen></iframe>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

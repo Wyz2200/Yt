@@ -1,4 +1,4 @@
-<input id="searchInput" placeholder="搜尋C影片">
+<input id="searchInput" placeholder="搜尋影片">
 <button onclick="doSearch()">搜尋</button>
 
 <h2>結果</h2>
